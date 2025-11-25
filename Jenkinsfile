@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "geethar27/springapp:latest"
-        APP_PORT = "80"
+        APP_PORT = "9090"
         COMPOSE_FILE = "docker-compose.yml"
     }
     

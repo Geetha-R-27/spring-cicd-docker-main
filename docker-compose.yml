@@ -22,7 +22,7 @@ services:
       - clicknbuy-db
     restart: always
     ports:
-      - "80:80"
+      - "9090:80"
     networks:
       - app-network
     environment:

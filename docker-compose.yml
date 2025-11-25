@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  clicknbuy-db-new:           # new DB container
+  clicknbuy-db-new:
     image: mysql:8
     container_name: clicknbuy-db-new
     restart: always
@@ -11,20 +11,30 @@ services:
       MYSQL_ROOT_HOST: '%'
       TZ: Asia/Kolkata
     ports:
-      - "3307:3306"            # use a different host port to avoid conflicts
+      - "3307:3306"
     networks:
       - app-network
 
-  springapp-new:              # new Spring Boot container
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  springapp-new:
     image: geethar27/springapp:latest
     container_name: springapp-new
-    depends_on:
-      - clicknbuy-db-new
     restart: always
+    depends_on:
+      clicknbuy-db-new:
+        condition: service_healthy
+
     ports:
-      - "9091:80"             # different host port
+      - "9091:80"
+
     networks:
       - app-network
+
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://clicknbuy-db-new:3306/clicknbuy_new?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root

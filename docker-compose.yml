@@ -1,32 +1,32 @@
 version: '3.8'
 
 services:
-  clicknbuy-db:
+  mynewapp-db:
     image: mysql:8
-    container_name: clicknbuy-db
+    container_name: mynewapp-db
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: clicknbuy
+      MYSQL_DATABASE: mynewappdb
       MYSQL_ROOT_HOST: '%'
       TZ: Asia/Kolkata
     ports:
-      - "3306:3306"
+      - "3307:3306"
     networks:
       - app-network
 
-  springapp:
-    image: geethar27/springapp:latest
-    container_name: springapp
+  mynewapp:
+    image: geethar27/springapp:latest  # rebuild for new project
+    container_name: mynewapp
     depends_on:
-      - clicknbuy-db
+      - mynewapp-db
     restart: always
     ports:
-      - "9090:80"
+      - "9091:80"
     networks:
       - app-network
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://clicknbuy-db:3306/clicknbuy?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_URL: jdbc:mysql://mynewapp-db:3306/mynewappdb?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       SPRING_JPA_HIBERNATE_DDL_AUTO: update

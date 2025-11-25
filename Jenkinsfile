@@ -4,8 +4,10 @@ pipeline {
     environment {
         DOCKER_IMAGE = "geethar27/springapp:latest"
         APP_PORT = "80"
+        COMPOSE_FILE = "docker-compose.yml"
     }
-    tools{
+    
+    tools {
         maven 'maven'
     }
 
@@ -18,14 +20,14 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build Docker Image (Manual)') {
             steps {
-                echo "Building Docker image"
+                echo "Building Docker image manually"
                 sh "docker build -t ${DOCKER_IMAGE} ."
             }
         }
 
-        stage('Stop Existing Container') {
+        stage('Stop Existing Container (Manual)') {
             steps {
                 echo "Stopping existing container if running"
                 sh """
@@ -37,10 +39,28 @@ pipeline {
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Run Docker Container (Manual)') {
             steps {
-                echo "Starting Spring Boot container"
+                echo "Starting Spring Boot container manually"
                 sh "docker run -d --name springapp -p ${APP_PORT}:80 ${DOCKER_IMAGE}"
+            }
+        }
+
+        stage('Stop Existing Containers (Compose)') {
+            steps {
+                echo "Stopping existing containers via Docker Compose"
+                sh """
+                if [ -f ${COMPOSE_FILE} ]; then
+                    docker-compose -f ${COMPOSE_FILE} down
+                fi
+                """
+            }
+        }
+
+        stage('Build & Run Docker Compose') {
+            steps {
+                echo "Building and starting containers using Docker Compose"
+                sh "docker-compose -f ${COMPOSE_FILE} up --build -d"
             }
         }
     }
@@ -50,7 +70,7 @@ pipeline {
             echo "Deployment completed successfully!"
         }
         failure {
-            echo "Deployment failed."
+            echo "Deployment failed. Check logs for errors."
         }
     }
 }

@@ -10,7 +10,7 @@ FROM eclipse-temurin:17-jdk-focal
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
-ENV SERVER_PORT=8080
+ENV SERVER_PORT=80
 
 EXPOSE ${SERVER_PORT}
 ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -21,7 +21,7 @@ services:
     restart: always
     environment:
       PORT: 80
-      DB_URL: mysql://clicknbuy-db:3306/clicknbuy
+      DB_URL: jdbc:mysql://clicknbuy-db:3306/clicknbuy?createDatabaseIfNotExist=true
       DB_UN: root
       DB_PWD: root
     ports:

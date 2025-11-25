@@ -5,6 +5,9 @@ pipeline {
         DOCKER_IMAGE = "geethar27/springapp:latest"
         APP_PORT = "80"
     }
+    tools{
+        maven 'maven'
+    }
 
     stages {
 

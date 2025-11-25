@@ -40,13 +40,6 @@ pipeline {
             }
         }
 
-        stage('Run Docker Container') {
-            steps {
-                echo "Starting Spring Boot container"
-                sh "docker run -d --name ${CONTAINER_NAME} -p ${APP_PORT}:80 ${DOCKER_IMAGE}"
-            }
-        }
-
         stage('Stop Existing Containers (Compose)') {
             steps {
                 echo "Stopping existing containers via Docker Compose"

@@ -3,10 +3,11 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "geethar27/springapp:latest"
-        APP_PORT = "9090"
+        APP_PORT = "9091"                   // new port for this project
+        CONTAINER_NAME = "springapp-new"    // new container name
         COMPOSE_FILE = "docker-compose.yml"
     }
-    
+
     tools {
         maven 'maven'
     }
@@ -20,12 +21,38 @@ pipeline {
             }
         }
 
+        stage('Build Docker Image') {
+            steps {
+                echo "Building Docker image"
+                sh "docker build -t ${DOCKER_IMAGE} ."
+            }
+        }
+
+        stage('Stop Existing Container') {
+            steps {
+                echo "Stopping existing container if running"
+                sh """
+                if [ \$(docker ps -q -f name=${CONTAINER_NAME}) ]; then
+                    docker stop ${CONTAINER_NAME}
+                    docker rm ${CONTAINER_NAME}
+                fi
+                """
+            }
+        }
+
+        stage('Run Docker Container') {
+            steps {
+                echo "Starting Spring Boot container"
+                sh "docker run -d --name ${CONTAINER_NAME} -p ${APP_PORT}:80 ${DOCKER_IMAGE}"
+            }
+        }
+
         stage('Stop Existing Containers (Compose)') {
             steps {
                 echo "Stopping existing containers via Docker Compose"
                 sh """
                 if [ -f ${COMPOSE_FILE} ]; then
-                    docker-compose -f ${COMPOSE_FILE} down
+                    docker-compose -f ${COMPOSE_FILE} down --remove-orphans
                 fi
                 """
             }

@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: clicknbuy-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: clicknbuy
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  app:
+    build: .
+    container_name: clicknbuy-app
+    restart: always
+    environment:
+      PORT: 80
+      DB_URL: mysql://clicknbuy-db:3306/clicknbuy
+      DB_UN: root
+      DB_PWD: root
+    ports:
+      - "80:80"
+    depends_on:
+      - mysql
+
+volumes:
+  mysql-data:
